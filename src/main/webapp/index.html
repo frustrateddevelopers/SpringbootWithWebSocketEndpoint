@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello WebSocket</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.3/sockjs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script type="text/javascript">
+               var ws;
+
+             connect = function(){
+                ws = new WebSocket("ws://localhost:9090/hello");
+                ws.onopen = function()
+               {
+                  // Web Socket is connected, send data using send()
+                  ws.send("Message to send");
+                  console.log("Message is sent...");
+               };
+               ws.onmessage = function (evt)
+               {
+                  var received_msg = evt.data;
+                  console.log("Message is received... "+ received_msg);
+               };
+             }
+
+             send = function(){
+                var msg = document.getElementById('name').value;
+                ws.send(msg);
+                ws.onmessage = function (evt)
+               {
+                  var received_msg = evt.data;
+                  console.log("Message is received... "+ received_msg);
+               };
+             }
+
+             disconnect = function(){
+              if(ws){
+                ws.close();
+                    ws.onclose = function()
+                   {
+                      // websocket is closed.
+                      console.log("Connection is closed...");
+                   };
+              }
+             }
+    </script>
+</head>
+<body onload="disconnect()">
+<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
+    Javascript and reload this page!</h2></noscript>
+<div>
+    <div>
+        <button id="connect" onclick="connect();">Connect</button>
+        <button id="disconnect" onclick="disconnect();">Disconnect</button>
+    </div>
+    <div id="conversationDiv">
+        <label>What is your name?</label><input type="text" id="name" />
+        <button id="sendName" onclick="send();">Send</button>
+        <p id="response"></p>
+    </div>
+</div>
+</body>
+</html>
